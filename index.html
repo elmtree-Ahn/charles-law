@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>온도와 기체의 부피! | 어게인 실험과학 수학학원</title>
+<meta name="description" content="손으로 만지며 알아보는 온도와 기체의 부피, 샤를의 법칙 놀이">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#e6f5fd; --sky2:#bfe4fb; --blue:#3a9ae0; --blue-d:#2476b8; --line:#d3e7f5;
+  --orange:#ff9a3c; --orange-d:#d97615; --orange-s:#fff1e0;
+  --ruby:#d81e4a; --ruby-d:#a3102f; --ink:#33414f; --sub:#6c7a8a;
+  --mint:#dcf5ea; --mint2:#8fdcb8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-weight:500;background:#fff}
+body{min-height:100vh;display:flex;flex-direction:column;-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+.jua,header,nav,.bbtn,.msg,.card,.note,.read,.quiz,footer{font-family:"Jua",sans-serif}
+
+.bbtn{font-size:22px;min-height:64px;min-width:140px;padding:10px 26px;color:#fff;background:var(--blue);border-radius:999px;
+  box-shadow:inset 0 -6px 0 rgba(0,0,0,.12),0 5px 0 var(--blue-d);word-break:keep-all}
+.bbtn:active{transform:translateY(3px)}
+.bbtn.orange{background:var(--orange);box-shadow:inset 0 -6px 0 rgba(0,0,0,.1),0 5px 0 var(--orange-d)}
+.bbtn.white{background:#fff;color:var(--blue-d);box-shadow:inset 0 -6px 0 rgba(0,0,0,.05),0 5px 0 var(--line);border:3px solid var(--sky2)}
+.bbtn.on{background:#fff3c4;color:#8a6400;border-color:#e8c95a;box-shadow:inset 0 -6px 0 rgba(0,0,0,.06),0 5px 0 #e8c95a}
+.bbtn:disabled{opacity:.4;cursor:default}
+.bbtn.on:disabled{opacity:1}
+
+header{position:sticky;top:0;z-index:30;background:#fff;box-shadow:0 3px 0 var(--line);padding:10px 16px}
+.head-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.titles{flex:1;min-width:0}
+.brand{font-size:16px;color:var(--sub)}
+h1{margin:0;font-weight:400;font-size:clamp(24px,4vw,34px);color:var(--blue-d);line-height:1.15;word-break:keep-all}
+.share{min-width:0;font-size:18px;min-height:54px;padding:8px 22px}
+
+nav{max-width:1100px;width:100%;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tab{position:relative;min-height:66px;border-radius:20px;background:var(--sky);font-size:clamp(15px,2.1vw,20px);line-height:1.2;padding:6px;
+  border:3px solid transparent;word-break:keep-all;text-align:center}
+.tab.on{background:var(--orange-s);border-color:var(--orange);color:var(--orange-d)}
+.tab .star{position:absolute;top:-12px;right:-2px;font-size:24px;color:#ffb800;display:none}
+.tab.done .star{display:block;animation:pop .5s}
+
+main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:16px}
+.panel{display:none}
+.panel.on{display:block;animation:fadein .3s}
+.msg{background:var(--sky);border-radius:20px;padding:12px 18px;font-size:clamp(18px,2.4vw,23px);line-height:1.45;word-break:keep-all;margin-bottom:12px;min-height:calc(2.9em + 24px)}
+.stage{position:relative;width:min(100%,max(62vh,300px),720px);margin:0 auto;border-radius:28px;overflow:hidden;box-shadow:0 0 0 3px var(--line);background:#f6fbff}
+.stage svg{display:block;width:100%;height:auto}
+.row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.card{display:none;margin:16px auto 0;max-width:880px;border-radius:24px;background:var(--mint);border:4px solid var(--mint2);padding:16px 20px;
+  font-size:clamp(20px,2.7vw,26px);text-align:center;line-height:1.5;color:#1f6b4b;word-break:keep-all}
+.card.on{display:block;animation:pop .5s}
+
+/* 핸드보일러 */
+.note{display:none;position:absolute;right:3%;top:5%;width:37%;background:#fff8d6;border:3px solid #f0cf5a;border-radius:16px;padding:8px 10px;
+  font-size:clamp(14px,2.1vw,19px);line-height:1.35;color:#7a5600;word-break:keep-all;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.note.on{display:block;animation:pop .5s}
+.note b{display:block;font-weight:400;color:var(--ruby)}
+.hand{transition:transform .5s,opacity .3s;transform:translateY(70px);opacity:0}
+.hand.on{transform:none;opacity:1}
+#ice{transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .3s;transform:translateY(-90px);opacity:0}
+#ice.on{transform:none;opacity:1}
+
+/* 오줌싸개 인형 */
+.cer{fill:#fff6e6;stroke:#d9a877;stroke-width:4;transition:fill-opacity .4s}
+.deco{transition:opacity .4s}
+#doll.see .cer{fill-opacity:.12}
+#doll.see .deco{opacity:.25}
+#air{transition:fill .8s}
+.steam path{fill:none;stroke:#ffb46b;stroke-width:5;stroke-linecap:round;animation:steam 1.4s ease-in-out infinite alternate}
+.steam path:nth-child(2){animation-delay:.5s}.steam path:nth-child(3){animation-delay:.9s}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.steps .bbtn{min-width:0;font-size:clamp(16px,2vw,20px);padding:8px 10px;line-height:1.25}
+.toggle{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:10px;min-width:0;min-height:52px;font-size:19px;padding:6px 16px}
+.sw{flex:none;position:relative;width:46px;height:26px;border-radius:99px;background:#c9d6e2;transition:background .2s}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle.on .sw{background:var(--orange)}
+.toggle.on .sw::after{transform:translateX(20px)}
+
+/* 온도와 부피 */
+.read{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.read div{min-width:150px;border-radius:20px;padding:6px 18px;font-size:20px;text-align:center;background:var(--orange-s);color:var(--orange-d)}
+.read div+div{background:var(--sky);color:var(--blue-d)}
+.read b{display:inline-block;min-width:1.9em;text-align:right;font-weight:400;font-size:1.7em}
+.slider{display:flex;align-items:center;gap:14px;min-height:60px;font-family:"Jua",sans-serif;font-size:22px;flex:1 1 320px;max-width:640px;min-width:min(100%,320px)}
+input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:22px;border-radius:99px;background:linear-gradient(90deg,#8fd0f5,var(--orange));outline:0;touch-action:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:56px;height:56px;border-radius:50%;background:#fff;border:6px solid var(--orange);box-shadow:0 4px 0 var(--orange-d)}
+input[type=range]::-moz-range-thumb{width:44px;height:44px;border-radius:50%;background:#fff;border:6px solid var(--orange)}
+
+.quiz{max-width:820px;margin:0 auto;text-align:center}
+.score{font-size:22px;color:var(--sub)}
+.score b{font-weight:400;color:var(--orange-d);font-size:1.3em}
+.q{background:var(--sky);border-radius:28px;padding:28px 20px;margin:12px 0;font-size:clamp(24px,3.6vw,34px);line-height:1.4;word-break:keep-all;min-height:150px;display:grid;place-items:center}
+.ox{display:flex;gap:20px;justify-content:center}
+.ox button{width:min(42%,220px);aspect-ratio:1.3;border-radius:32px;font-size:clamp(70px,13vw,110px);line-height:1;color:#fff}
+.ox .o{background:var(--blue);box-shadow:0 8px 0 var(--blue-d)}
+.ox .x{background:var(--ruby);box-shadow:0 8px 0 var(--ruby-d)}
+.ox button:active{transform:translateY(4px)}
+.ox button:disabled{opacity:.4}
+.fb{min-height:70px;margin-top:16px;font-size:clamp(20px,2.8vw,26px);line-height:1.4;word-break:keep-all}
+.fb.good{color:#1f8a57}.fb.bad{color:#c8283a}
+
+footer{background:var(--sky);padding:16px;text-align:center;font-size:17px;color:var(--blue-d);line-height:1.6}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:"Jua",sans-serif;font-size:20px;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:99;white-space:nowrap}
+.toast.on{opacity:1}
+.conf{position:fixed;top:-20px;width:14px;height:14px;z-index:98;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes steam{from{opacity:.15}to{opacity:.85}}
+svg text{font-family:"Jua",sans-serif}
+
+@media (max-width:720px){ .steps{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){
+  .msg{min-height:calc(4.35em + 24px)}
+  .bbtn{font-size:19px;padding:10px 18px;min-width:0}
+  .share{font-size:17px;padding:8px 16px}
+  .toggle{font-size:17px;padding:6px 12px;gap:6px}
+}
+</style>
+</head>
+<body>
+<header><div class="head-in">
+  <div class="titles"><div class="brand">어게인 실험과학 수학학원</div><h1>온도와 기체의 부피!</h1></div>
+  <button class="bbtn orange share" id="share">공유하기</button>
+</div></header>
+
+<nav>
+  <button class="tab on" data-t="0">핸드보일러<span class="star">★</span></button>
+  <button class="tab" data-t="1">오줌싸개 인형<span class="star">★</span></button>
+  <button class="tab" data-t="2">온도와 부피<span class="star">★</span></button>
+  <button class="tab" data-t="3">OX 퀴즈<span class="star">★</span></button>
+</nav>
+
+<main>
+<!-- 1 핸드보일러 -->
+<section class="panel on">
+  <div class="msg" id="m0">핸드보일러의 빨간 액체는 지금 아래 병에 있어요. 버튼을 하나씩 눌러 보세요.</div>
+  <div class="stage">
+    <svg viewBox="0 0 600 460" role="img" aria-label="유리병 두 개가 가는 유리관으로 이어진 핸드보일러">
+      <defs>
+        <clipPath id="clU"><circle cx="250" cy="128" r="73"/></clipPath>
+        <clipPath id="clL"><circle cx="250" cy="348" r="73"/></clipPath>
+      </defs>
+      <rect width="600" height="460" fill="#f6fbff"/>
+      <rect y="436" width="600" height="24" fill="#e3edf5"/>
+      <ellipse cx="250" cy="431" rx="42" ry="7" fill="#cfe3f1"/>
+      <!-- 손바닥 (병 뒤) -->
+      <g class="hand" fill="#ffd9b0" stroke="#e0a56e" stroke-width="3">
+        <rect x="300" y="392" width="170" height="78" rx="36" transform="rotate(14 300 430)"/>
+        <ellipse cx="250" cy="372" rx="106" ry="72"/>
+      </g>
+      <!-- 병 -->
+      <circle cx="250" cy="128" r="76" fill="#fdfeff"/>
+      <circle cx="250" cy="348" r="76" fill="#fdfeff"/>
+      <circle id="gasU" cx="250" cy="128" r="73" fill="#58b7f0" opacity="0"/>
+      <circle id="gasL" cx="250" cy="348" r="73" fill="#ff8a1e" opacity="0"/>
+      <text x="250" y="102" font-size="20" fill="#6c7a8a" text-anchor="middle">기체</text>
+      <text x="286" y="308" font-size="20" fill="#6c7a8a" text-anchor="middle">기체</text>
+      <rect id="liqU" clip-path="url(#clU)" x="170" y="204" width="160" height="0" fill="#d81e4a"/>
+      <rect id="liqL" clip-path="url(#clL)" x="170" y="338" width="160" height="86" fill="#d81e4a"/>
+      <circle cx="250" cy="128" r="76" fill="none" stroke="#8fc0de" stroke-width="5"/>
+      <circle cx="250" cy="348" r="76" fill="none" stroke="#8fc0de" stroke-width="5"/>
+      <!-- 유리관 -->
+      <rect x="243" y="198" width="14" height="214" fill="#fdfeff"/>
+      <rect id="liqT" x="245" y="338" width="10" height="74" fill="#d81e4a"/>
+      <path d="M242,203 V412 M258,203 V412" fill="none" stroke="#8fc0de" stroke-width="3" stroke-linecap="round"/>
+      <g id="bub1" fill="#fff" stroke="#ffc2d0" stroke-width="1.5"><circle/><circle/><circle/><circle/><circle/><circle/></g>
+      <path d="M196,98 a62,62 0 0 1 30,-30 M196,318 a62,62 0 0 1 30,-30" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+      <text x="150" y="135" font-size="22" fill="#2476b8" text-anchor="end">위 병</text>
+      <text x="142" y="290" font-size="22" fill="#2476b8" text-anchor="end">아래 병</text>
+      <text x="272" y="246" font-size="20" fill="#6c7a8a">유리관</text>
+      <!-- 손가락 (병 앞) -->
+      <g class="hand" fill="#ffd9b0" stroke="#e0a56e" stroke-width="3">
+        <rect x="150" y="306" width="62" height="24" rx="12" transform="rotate(-14 181 318)"/>
+        <rect x="146" y="336" width="62" height="24" rx="12" transform="rotate(-4 177 348)"/>
+        <rect x="150" y="366" width="62" height="24" rx="12" transform="rotate(8 181 378)"/>
+        <rect x="160" y="394" width="58" height="22" rx="11" transform="rotate(20 189 405)"/>
+        <rect x="290" y="330" width="60" height="26" rx="13" transform="rotate(-24 320 343)"/>
+        <text x="372" y="336" font-size="20" fill="#d97615" stroke="none">따뜻한 손</text>
+      </g>
+      <!-- 얼음 주머니 -->
+      <g id="ice">
+        <path d="M194,68 Q182,18 250,16 Q318,18 306,68 Q250,86 194,68Z" fill="#d7eefc" fill-opacity=".9" stroke="#6cb9ea" stroke-width="4"/>
+        <g fill="#fff" stroke="#8fd0f5" stroke-width="3">
+          <rect x="208" y="34" width="24" height="24" rx="5" transform="rotate(-12 220 46)"/>
+          <rect x="238" y="28" width="24" height="24" rx="5" transform="rotate(8 250 40)"/>
+          <rect x="268" y="36" width="24" height="24" rx="5" transform="rotate(-6 280 48)"/>
+        </g>
+        <text x="326" y="44" font-size="20" fill="#2476b8">얼음</text>
+      </g>
+    </svg>
+    <div class="note" id="note"><b>끓는 게 아니에요!</b> 아래 병의 기체가 액체를 지나가는 거예요</div>
+  </div>
+  <div class="row">
+    <button class="bbtn white" id="bNone">그대로 두기</button>
+    <button class="bbtn orange" id="bHand">아래 병 손으로 감싸기</button>
+    <button class="bbtn" id="bIce">위 병 얼음물로 감싸기</button>
+  </div>
+  <div class="card" id="c0">기체는 따뜻해지면 부피가 커지고,<br>차가워지면 작아져요.</div>
+</section>
+
+<!-- 2 오줌싸개 인형 -->
+<section class="panel">
+  <div class="msg" id="m1"></div>
+  <div class="stage">
+    <svg viewBox="0 0 600 460" role="img" aria-label="작은 구멍이 하나 뚫린 속이 빈 도자기 인형">
+      <defs>
+        <clipPath id="cav"><circle cx="0" cy="-182" r="37"/><rect x="-16" y="-150" width="32" height="24"/><rect x="-39" y="-131" width="78" height="122" rx="31"/></clipPath>
+      </defs>
+      <rect width="600" height="460" fill="#f6fbff"/>
+      <g id="tray"><ellipse cx="300" cy="430" rx="215" ry="18" fill="#e3ebf2" stroke="#b9c8d6" stroke-width="4"/></g>
+      <ellipse id="pud" cx="452" cy="431" rx="0" ry="0" fill="#ffd23f"/>
+      <rect id="beaker" x="168" y="118" width="264" height="318" rx="14" fill="#fdfeff"/>
+      <!-- 인형 -->
+      <g id="doll" transform="translate(300 424)">
+        <g id="air" fill="#cde8fb"><circle cx="0" cy="-182" r="37"/><rect x="-16" y="-150" width="32" height="24"/><rect x="-39" y="-131" width="78" height="122" rx="31"/></g>
+        <rect id="dwater" clip-path="url(#cav)" x="-45" y="-9" width="90" height="0" fill="#ffd23f"/>
+        <text x="0" y="-98" font-size="20" fill="#2476b8" text-anchor="middle">공기</text>
+        <text id="waterT" x="0" y="-32" font-size="20" fill="#8a6400" text-anchor="middle" opacity="0">물</text>
+        <ellipse class="cer" cx="-22" cy="-5" rx="22" ry="9"/>
+        <ellipse class="cer" cx="22" cy="-5" rx="22" ry="9"/>
+        <rect class="cer" x="42" y="-40" width="17" height="12" rx="5"/>
+        <rect class="cer" x="-48" y="-140" width="96" height="138" rx="40"/>
+        <circle class="cer" cx="0" cy="-182" r="46"/>
+        <g class="deco">
+          <path d="M-45,-192 Q-42,-232 0,-230 Q42,-232 45,-192 Q22,-212 -4,-207 Q-28,-204 -45,-192Z" fill="#8a5a36"/>
+          <circle cx="6" cy="-182" r="4" fill="#33414f"/><circle cx="28" cy="-182" r="4" fill="#33414f"/>
+          <path d="M9,-166 q8,8 16,0" fill="none" stroke="#b84a3a" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="-8" cy="-168" r="6" fill="#ffc9b8"/>
+          <path d="M-36,-112 q-16,24 0,48 M36,-112 q16,24 0,48" fill="none" stroke="#d9a877" stroke-width="4" stroke-linecap="round"/>
+        </g>
+        <circle cx="59" cy="-34" r="2.5" fill="#33414f"/>
+        <text id="holeT" x="68" y="-76" font-size="18" fill="#6c7a8a">작은 구멍</text>
+      </g>
+      <!-- 비커 (인형 앞) -->
+      <g id="beakerF">
+        <rect id="bw" x="171" y="162" width="258" height="271" rx="10"/>
+        <g id="cubes" fill="#fff" fill-opacity=".8" stroke="#7cc3ee" stroke-width="3">
+          <rect x="196" y="148" width="26" height="26" rx="5" transform="rotate(-10 209 161)"/>
+          <rect x="262" y="152" width="26" height="26" rx="5" transform="rotate(12 275 165)"/>
+          <rect x="330" y="146" width="26" height="26" rx="5" transform="rotate(-6 343 159)"/>
+          <rect x="386" y="152" width="24" height="24" rx="5" transform="rotate(16 398 164)"/>
+        </g>
+        <g id="steamB" class="steam"><path d="M228,108 q-12,-14 0,-28 q12,-14 0,-28"/><path d="M286,108 q-12,-14 0,-28 q12,-14 0,-28"/><path d="M344,108 q-12,-14 0,-28 q12,-14 0,-28"/></g>
+        <path d="M168,118 V422 Q168,436 182,436 H418 Q432,436 432,422 V118" fill="none" stroke="#8fc0de" stroke-width="5" stroke-linecap="round"/>
+        <text id="bT" x="156" y="152" font-size="24" text-anchor="end"></text>
+      </g>
+      <g id="bub2" fill="#fff" stroke="#8fc0de" stroke-width="2"><circle/><circle/><circle/><circle/><circle/><circle/><circle/></g>
+      <g id="inflow" fill="none" stroke="#d99a00" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+        <path id="inflowL" d="M404,390 H372" stroke-dasharray="8 8"/><path d="M378,381 L367,390 L378,399"/>
+      </g>
+      <!-- 붓기 -->
+      <g id="pour">
+        <path id="strm" d="M264,98 Q292,108 298,196" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="14 5"/>
+        <path id="run" d="M268,206 Q250,228 254,262 L250,300 L251,414 M332,206 Q350,228 346,262 L350,300 L349,414" fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 8" opacity=".85"/>
+        <g id="cup" transform="translate(262 96)">
+          <path d="M0,0 H-64 L-57,72 H-7 Z" fill="#fdfeff" stroke="#8fc0de" stroke-width="4" stroke-linejoin="round"/>
+          <path id="cupW" d="M-3,16 H-61 L-56,68 H-8 Z"/>
+          <g id="steamC" class="steam"><path d="M-46,-10 q-10,-10 0,-20 q10,-10 0,-20"/><path d="M-18,-10 q-10,-10 0,-20 q10,-10 0,-20"/></g>
+        </g>
+        <text id="cupT" x="186" y="150" font-size="24" text-anchor="end"></text>
+      </g>
+      <path id="sq" fill="none" stroke="#f2bd0c" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 5" opacity="0"/>
+    </svg>
+    <button class="bbtn white toggle" id="see" aria-pressed="false"><span class="sw"></span>속 보기</button>
+  </div>
+  <div class="steps">
+    <button class="bbtn step">① 뜨거운 물에 담그기</button>
+    <button class="bbtn step">② 얼음물에 담그기</button>
+    <button class="bbtn step">③ 머리에 얼음물 붓기</button>
+    <button class="bbtn step">④ 머리에 뜨거운 물 붓기</button>
+  </div>
+  <div class="row">
+    <button class="bbtn" id="reset2">처음부터</button>
+  </div>
+  <div class="card" id="c1">인형 속 공기의 부피가 커져서<br>물을 밀어냈어요.</div>
+</section>
+
+<!-- 3 온도와 부피 -->
+<section class="panel">
+  <div class="msg" id="m2">손잡이를 끌어 온도를 0℃까지, 100℃까지 바꿔 보세요. 뚜껑과 부피 숫자를 잘 보세요.</div>
+  <div class="stage">
+    <svg viewBox="0 0 600 460" role="img" aria-label="뚜껑이 오르내리는 원통과 온도계">
+      <rect width="600" height="460" fill="#f6fbff"/>
+      <!-- 온도계 -->
+      <rect x="96" y="66" width="28" height="336" rx="14" fill="#fff" stroke="#9cb4c6" stroke-width="4"/>
+      <rect id="thm" x="103" y="316" width="14" height="80" rx="7" fill="#d81e4a"/>
+      <circle cx="110" cy="410" r="26" fill="#d81e4a" stroke="#9cb4c6" stroke-width="4"/>
+      <path d="M126,100 h12 M126,235 h12 M126,370 h12" stroke="#9cb4c6" stroke-width="4" stroke-linecap="round"/>
+      <text x="146" y="107" font-size="20" fill="#d97615">100℃</text>
+      <text x="146" y="242" font-size="20" fill="#6c7a8a">50℃</text>
+      <text x="146" y="377" font-size="20" fill="#2476b8">0℃</text>
+      <text x="110" y="48" font-size="20" fill="#6c7a8a" text-anchor="middle">온도계</text>
+      <!-- 원통 -->
+      <rect x="252" y="30" width="196" height="400" fill="#fdfeff"/>
+      <rect id="gas3" x="253" y="164" width="194" height="266" fill="#a9daf7"/>
+      <text x="350" y="340" font-size="26" fill="#33414f" text-anchor="middle">공기</text>
+      <g id="lid" transform="translate(0 164)">
+        <rect x="343" y="-48" width="14" height="32" fill="#7d93a8"/>
+        <rect x="322" y="-60" width="56" height="14" rx="7" fill="#7d93a8"/>
+        <rect x="253" y="-18" width="194" height="18" rx="4" fill="#7d93a8"/>
+        <text x="350" y="-70" font-size="20" fill="#6c7a8a" text-anchor="middle">뚜껑</text>
+      </g>
+      <path d="M250,30 V420 Q250,432 262,432 H438 Q450,432 450,420 V30" fill="none" stroke="#8fc0de" stroke-width="5" stroke-linecap="round"/>
+      <path d="M454,92.3 h14 M454,114.8 h8 M454,137.3 h14 M454,159.8 h8 M454,182.3 h14" stroke="#9cb4c6" stroke-width="4" stroke-linecap="round"/>
+      <text x="476" y="99" font-size="20" fill="#d97615">373mL</text>
+      <text x="476" y="144" font-size="20" fill="#6c7a8a">323mL</text>
+      <text x="476" y="189" font-size="20" fill="#2476b8">273mL</text>
+    </svg>
+  </div>
+  <div class="row">
+    <div class="read"><div>온도 <b id="tv">20</b>℃</div><div>부피 <b id="vv">293</b>mL</div></div>
+    <label class="slider"><span>0℃</span><input type="range" id="temp" min="0" max="100" step="1" value="20" aria-label="온도"><span>100℃</span></label>
+  </div>
+  <div class="card" id="c2">온도에 따라 기체의 부피가 달라져요.<br>이것이 샤를의 법칙이에요.</div>
+</section>
+
+<!-- 4 OX 퀴즈 -->
+<section class="panel">
+  <div class="quiz">
+    <div class="score"><span id="qn">1</span> / 5 번째 문제 · 점수 <b id="sc">0</b>점</div>
+    <div class="q" id="q"></div>
+    <div class="ox" id="ox"><button class="o" data-a="O">O</button><button class="x" data-a="X">X</button></div>
+    <div class="fb" id="qfb"></div>
+    <div class="row"><button class="bbtn" id="next" style="display:none">다음 문제</button></div>
+  </div>
+</section>
+</main>
+
+<footer>어게인 실험과학 수학학원<br>교육문의 010.2976.5774</footer>
+<div class="toast" id="toast">주소가 복사됐어요</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k;
+const set=(el,o)=>{ for(const k in o) el.setAttribute(k,o[k]); };
+
+/* ---------- 소리 ---------- */
+let ac;
+function audio(){ if(!ac){const A=window.AudioContext||window.webkitAudioContext; if(A) ac=new A();} if(ac&&ac.state==='suspended') ac.resume(); return ac; }
+function tone(freq,dur,vol,type='sine',when=0,freqEnd){
+  const a=audio(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain(), t=a.currentTime+when;
+  o.type=type; o.frequency.setValueAtTime(freq,t); if(freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.03); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+dur+0.05);
+}
+const cheer=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.3,.2,'triangle',i*.11));
+const boo=()=>tone(220,.35,.15,'sawtooth',0,140);
+const warmS=()=>tone(300,.5,.07,'sine',0,620), coldS=()=>tone(620,.5,.07,'sine',0,300);
+const pop=()=>tone(700+Math.random()*600,.06,.03);
+
+/* ---------- 보상 ---------- */
+function confetti(){
+  const cols=['#3a9ae0','#ff9a3c','#d81e4a','#ffd23f','#8fdcb8'];
+  for(let i=0;i<60;i++){ const d=document.createElement('div'); d.className='conf';
+    d.style.left=Math.random()*100+'vw'; d.style.background=cols[i%5]; d.style.borderRadius=i%2?'50%':'3px';
+    d.style.animationDuration=1.4+Math.random()*1.6+'s'; d.style.animationDelay=Math.random()*.4+'s';
+    document.body.appendChild(d); setTimeout(()=>d.remove(),3600); }
+}
+const tabs=$$('.tab'), panels=$$('.panel');
+function done(i){ if(tabs[i].classList.contains('done')) return; tabs[i].classList.add('done'); confetti(); cheer(); const c=$('#c'+i); if(c) c.classList.add('on'); }
+
+/* ---------- 탭 ---------- */
+let cur=0;
+tabs.forEach(b=>b.onclick=()=>{ cur=+b.dataset.t; tabs.forEach((t,i)=>t.classList.toggle('on',i===cur)); panels.forEach((p,i)=>p.classList.toggle('on',i===cur)); audio(); });
+
+/* ---------- 공유 ---------- */
+$('#share').onclick=async()=>{
+  const url=location.href;
+  if(navigator.share){ try{ await navigator.share({title:document.title,url}); return; }catch(e){ if(e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(url); }
+  catch(e){ const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const el=$('#toast'); el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),1800);
+};
+
+/* ---------- 1 핸드보일러 ---------- */
+// p : 위 병으로 올라간 액체의 정도 (0 = 모두 아래 병, 1 = 다 올라감)
+let mode='', cause='', p=0, warm=0, cold=0, arrived=true, wasUp=false, seen1={};
+const bub1=$$('#bub1 circle');
+function setMode(m){
+  mode=(m===mode&&m!=='none')?'none':m; arrived=false; wasUp=p>.02;
+  $('#bNone').classList.toggle('on',mode==='none');
+  $('#bHand').classList.toggle('on',mode==='hand'); $('#bHand').textContent=mode==='hand'?'손 떼기':'아래 병 손으로 감싸기';
+  $('#bIce').classList.toggle('on',mode==='ice'); $('#bIce').textContent=mode==='ice'?'얼음물 치우기':'위 병 얼음물로 감싸기';
+  $$('.hand').forEach(g=>g.classList.toggle('on',mode==='hand')); $('#ice').classList.toggle('on',mode==='ice');
+  $('#note').classList.remove('on');
+  $('#m0').textContent = mode==='hand' ? '손의 열이 아래 병 속 기체로 전해져요. 따뜻해진 기체는 부피가 커지면서 액체를 관 위로 밀어 올려요.'
+    : mode==='ice' ? '위 병의 기체가 식어 부피가 작아져요. 그만큼 아래 병의 기체가 액체를 밀어 올려요.'
+    : !wasUp ? '그대로 두면 액체는 움직이지 않아요.'
+    : cause==='hand' ? '손을 떼면 아래 병의 기체가 식어 부피가 작아지고, 액체가 천천히 아래로 돌아와요.'
+    : '얼음물을 치우면 액체가 천천히 아래로 돌아와요.';
+  if(mode==='hand'){ cause='hand'; warmS(); } else if(mode==='ice'){ cause='ice'; coldS(); } else tone(440,.1,.06,'triangle');
+}
+$('#bNone').onclick=()=>setMode('none'); $('#bHand').onclick=()=>setMode('hand'); $('#bIce').onclick=()=>setMode('ice');
+function arrive(){
+  if(mode==='hand'){ $('#note').classList.add('on'); $('#m0').textContent='액체가 다 올라갔어요! 위 병에서 보글보글 올라오는 방울을 잘 보세요.'; seen1.hand=1; }
+  else if(mode==='ice'){ $('#m0').textContent='위 병 기체의 부피가 작아진 만큼 액체가 천천히 올라왔어요.'; seen1.ice=1; }
+  else if(wasUp) $('#m0').textContent='액체가 아래 병으로 다 돌아왔어요. 다른 버튼도 눌러 보세요.';
+  if(seen1.hand&&seen1.ice) done(0);
+}
+function draw1(t,dt){
+  const target=mode==='hand'?1:mode==='ice'?.62:0, rate=mode==='hand'?1/4.5:mode==='ice'?1/10:1/7;   // 얼음은 손보다 천천히
+  p+=clamp(target-p,-rate*dt,rate*dt);
+  warm+=clamp((mode==='hand'?1:0)-warm,-dt/3,dt/1.2); cold+=clamp((mode==='ice'?1:0)-cold,-dt/3,dt/1.2);
+  if(!arrived&&Math.abs(p-target)<1e-6){ arrived=true; arrive(); }
+  const hL=lerp(86,10,p), hU=78*clamp((p-.2)/.8), yT=lerp(338,204,clamp(p/.2));
+  set($('#liqL'),{y:424-hL,height:hL}); set($('#liqU'),{y:204-hU,height:hU}); set($('#liqT'),{y:yT,height:412-yT});
+  $('#gasL').setAttribute('opacity',.6*warm); $('#gasU').setAttribute('opacity',.6*cold);
+  const full=mode==='hand'&&arrived;
+  bub1.forEach((c,i)=>{ const y=lerp(330,208-hU,(t*.5+i/6)%1), up=y<200;
+    set(c,{cx:250+(up?Math.sin(t*4+i*2)*10:0),cy:y,r:up?3+i%3:2.5,opacity:full?.9:0}); });
+  if(full&&Math.random()<dt*5) pop();
+}
+
+/* ---------- 2 오줌싸개 인형 ---------- */
+// st : 끝낸 단계 수, run : 지금 움직이는 단계(-1 = 없음), sc : 화면에 보이는 단계, k : 그 단계의 진행(0~1)
+let st=0, run=-1, sc=-1, k=1, see=false;
+const DUR=[4,4.5,3.5,5], sBtns=$$('.step'), bub2=$$('#bub2 circle');
+const M2I="①번부터 차례로 눌러 보세요. '속 보기'를 켜면 인형 속 공기가 보여요.";
+const M2=[
+  '뜨거운 물에 담그면 인형 속 공기는 부피가 커져 일부가 방울로 빠져나가요.',
+  '얼음물에 담그면 남은 공기의 부피가 작아져, 그 자리로 노란 물이 들어와요.',
+  '머리에 얼음물을 부었어요. 구멍에서 아무것도 나오지 않아요. 속 공기의 부피가 그대로예요.',
+  '머리에 뜨거운 물을 부으면 속 공기는 부피가 다시 커져 물을 밖으로 밀어내요!'];
+function scene(){
+  const dip=sc===0||sc===1, pour=sc>=2&&run>=0, hot=sc===0||sc===3;
+  $('#tray').style.display=dip?'none':''; $('#beaker').style.display=$('#beakerF').style.display=dip?'':'none';
+  $('#pour').style.display=pour?'':'none'; $('#holeT').style.display=dip?'none':'';
+  if(dip){ $('#bw').setAttribute('fill',hot?'rgba(255,154,60,.3)':'rgba(255,210,63,.45)'); $('#cubes').style.display=hot?'none':''; $('#steamB').style.display=hot?'':'none';
+    $('#bT').textContent=hot?'뜨거운 물':'노란 얼음물'; $('#bT').setAttribute('fill',hot?'#d97615':'#2476b8'); }
+  if(pour){ const c=hot?'#ffb46b':'#f6cf3a'; $('#strm').setAttribute('stroke',c); $('#run').setAttribute('stroke',c); $('#cupW').setAttribute('fill',c);
+    $('#steamC').style.display=hot?'':'none'; $('#cupT').textContent=hot?'뜨거운 물':'얼음물'; $('#cupT').setAttribute('fill',hot?'#d97615':'#2476b8'); }
+  $('#air').style.fill=sc<0?'#cde8fb':hot?'#ffd3a3':'#bfe4fb';
+  sBtns.forEach((b,i)=>{ b.disabled=i!==st||run>=0; b.className='bbtn step '+(i<st||i===run?'white on':i===st?'orange':'white'); });
+}
+sBtns.forEach((b,i)=>b.onclick=()=>{ if(i!==st||run>=0) return; run=sc=i; k=0; $('#m1').textContent=M2[i]; scene(); i===0||i===3?warmS():coldS(); });
+$('#see').onclick=()=>{ see=!see; $('#see').classList.toggle('on',see); $('#see').setAttribute('aria-pressed',see); $('#doll').classList.toggle('see',see); tone(520,.08,.06,'triangle'); };
+$('#reset2').onclick=()=>{ st=0; run=sc=-1; k=1; $('#m1').textContent=M2I; scene(); tone(440,.1,.06,'triangle'); };
+function draw2(t,dt){
+  if(run>=0){ k=Math.min(1,k+dt/DUR[run]); if(k===1){ run=-1; st++; scene(); if(st===4) done(1); } }
+  const e=k*k*(3-2*k), q=clamp((k-.2)/.75), str=sc===3?Math.sin(Math.PI*q):0;
+  const h=sc===1?75*e:sc===2?75:sc===3?75-51*q:0;                 // 인형 속 물 높이
+  const s=sc===0?1+.06*e:sc===1?1.06-.06*e:sc===3?1+.05*str:1;    // 공기 덩어리 부풀기
+  set($('#dwater'),{y:-9-h,height:h}); $('#waterT').setAttribute('opacity',h>45?1:0);
+  $('#air').setAttribute('transform',`translate(0 -100) scale(${s}) translate(0 100)`);
+  const on=run===0&&k>.1&&k<.97;
+  bub2.forEach((c,i)=>{ const ph=(t*.6+i/7)%1; set(c,{cx:362+ph*26+5*Math.sin(t*5+i),cy:lerp(388,170,ph),r:3+i%3*1.5,opacity:on?.9:0}); });
+  if(on&&Math.random()<dt*6) pop();
+  $('#inflow').setAttribute('opacity',run===1?1:0); $('#inflowL').setAttribute('stroke-dashoffset',t*40);
+  if(run>=2){ const flow=k>.12&&k<.86?1:0;
+    $('#cup').setAttribute('transform',`translate(262 96) rotate(${42*clamp(k/.12)*clamp((1-k)/.1)})`);
+    set($('#strm'),{opacity:flow,'stroke-dashoffset':-t*160}); set($('#run'),{opacity:k>.2&&k<.93?.85:0,'stroke-dashoffset':-t*120}); }
+  const L=40+95*str;
+  set($('#sq'),{d:`M358,390 Q${358+L*.55},${390-36*str} ${358+L},427`,opacity:str>.03?1:0,'stroke-dashoffset':-t*140});
+  set($('#pud'),{rx:48*(sc===3?q:0),ry:7*(sc===3?q:0)});
+}
+$('#m1').textContent=M2I; scene();
+
+/* ---------- 3 온도와 부피 ---------- */
+// 부피(mL) = 273 + 온도(℃)  → 0℃ 273mL, 100℃ 373mL
+let lidT=20, prevT=20, seen3={};
+const temp=$('#temp'), COLD=[143,208,245], MID=[255,238,205], HOT=[255,176,102];
+temp.addEventListener('input',()=>{
+  const T=+temp.value; $('#tv').textContent=T; $('#vv').textContent=273+T;
+  $('#m2').textContent = T===0 ? '0℃일 때 공기의 부피는 273mL예요.'
+    : T===100 ? '100℃일 때 공기의 부피는 373mL예요. 0℃일 때보다 100mL 늘어났어요.'
+    : T>prevT ? '온도가 높아지니 공기의 부피가 커져서 뚜껑이 올라가요.'
+    : T<prevT ? '온도가 낮아지니 공기의 부피가 작아져서 뚜껑이 내려가요.' : $('#m2').textContent;
+  prevT=T; if(T<=10) seen3.lo=1; if(T>=90) seen3.hi=1; if(seen3.lo&&seen3.hi) done(2);
+});
+function draw3(t,dt){
+  lidT+=(+temp.value-lidT)*Math.min(1,dt*8);
+  const y=428-(273+lidT)*.9, c=lidT/100;   // 뚜껑 아랫면 높이
+  $('#lid').setAttribute('transform',`translate(0 ${y})`);
+  set($('#gas3'),{y,height:430-y,fill:'rgb('+MID.map((v,i)=>Math.round(c<.5?lerp(COLD[i],v,c*2):lerp(v,HOT[i],c*2-1)))+')'});
+  set($('#thm'),{y:370-2.7*lidT,height:26+2.7*lidT});
+}
+
+/* ---------- 4 OX 퀴즈 ---------- */
+const QS=[
+ ['기체는 온도가 높아지면 부피가 커진다','O','기체는 따뜻해지면 부피가 커져요.'],
+ ['핸드보일러 속 액체가 올라간 것은 액체가 끓었기 때문이다','X','끓은 것이 아니에요. 따뜻해진 기체가 부피가 커지면서 액체를 밀어 올렸어요.'],
+ ['위 병을 얼음물로 감싸면 위 병 속 기체의 부피가 작아진다','O','기체는 차가워지면 부피가 작아져요.'],
+ ['인형 머리에 얼음물을 부어도 물줄기가 나온다','X','뜨거운 물을 부어야 속 공기의 부피가 커져서 물을 밀어내요.'],
+ ['온도에 따라 기체의 부피가 달라지는 규칙을 샤를의 법칙이라고 한다','O','온도에 따라 기체의 부피가 달라지는 규칙이 샤를의 법칙이에요.']
+];
+let qi=0, score=0;
+function showQ(){
+  $('#ox').style.display=''; $('#qn').textContent=qi+1; $('#sc').textContent=score; $('#q').textContent=QS[qi][0];
+  $('#qfb').textContent=''; $('#qfb').className='fb'; $('#next').style.display='none'; $$('#ox button').forEach(b=>b.disabled=false);
+}
+$$('#ox button').forEach(b=>b.onclick=()=>{
+  const [,ans,why]=QS[qi], ok=b.dataset.a===ans; $$('#ox button').forEach(x=>x.disabled=true);
+  if(ok){ score++; cheer(); } else boo();
+  $('#sc').textContent=score; $('#qfb').className='fb '+(ok?'good':'bad');
+  $('#qfb').textContent=(ok?'딩동댕! ':'아쉬워요. 정답은 '+ans+'예요. ')+why;
+  $('#next').textContent=qi<4?'다음 문제':'결과 보기'; $('#next').style.display='';
+});
+$('#next').onclick=()=>{
+  if(qi===5){ qi=0; score=0; showQ(); return; }
+  if(++qi<5){ showQ(); return; }
+  $('#q').textContent=`5문제 중 ${score}문제를 맞혔어요!`; $('#ox').style.display='none'; $('#qfb').className='fb good';
+  $('#qfb').textContent=score===5?'완벽해요! 기체 박사님이네요.':score>=3?'잘했어요! 틀린 문제는 앞의 실험으로 다시 확인해 보세요.':'괜찮아요. 앞의 실험을 다시 해 보고 또 도전해요!';
+  $('#next').textContent='다시 하기'; if(score===5){ tabs[3].classList.add('done'); confetti(); cheer(); }
+};
+showQ();
+
+/* ---------- 그리기 ---------- */
+const draws=[draw1,draw2,draw3,()=>{}];
+let last=0;
+(function loop(now){ const dt=Math.min(.25,(now-last)/1000); last=now; draws[cur](now/1000,dt); requestAnimationFrame(loop); })(0);
+</script>
+</body>
+</html>
